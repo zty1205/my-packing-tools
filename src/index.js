@@ -25,5 +25,10 @@ const fn = (x) => {
   return x**x;
 }
 
+console.log("hello")
 console.log("list = ", list);
 console.log("isArray = ", utils.isArray(list));
+
+if (process.env.NODE_ENV === "development" && module.hot) {
+  module.hot.accept()
+}
