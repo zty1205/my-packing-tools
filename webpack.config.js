@@ -53,5 +53,12 @@ module.exports = {
         removeComments: true, //移除HTML中的注释
       }
     })
-  ]
+  ],
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    port: 8068,
+    host: 'localhost',
+    overlay: true, // 浏览器会显示编译错误
+    autoOpenBrowser: true
+  }
 }
