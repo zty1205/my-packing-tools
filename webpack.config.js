@@ -3,7 +3,7 @@ const htmlWebpackPlugin = require('html-webpack-plugin')
 const cleanWebpackPlugin = require('clean-webpack-plugin')
 // const extractTextPlugin = require("extract-text-webpack-plugin") //用来抽离单独抽离css文件
 const miniCssExtractPlugin = require("mini-css-extract-plugin") //用来抽离单独抽离css文件
-
+const copyWebpackPlugin = require("copy-webpack-plugin")
 const devEnv = process.env.NODE_ENV !== 'production';
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js' // '[原文件名].js'
+    filename: 'js/[name].[hash:8].js' // '[原文件名].js'
   },
   devtool: devEnv ? 'inline-cheap-source-map' : false,
   module: {
@@ -47,7 +47,9 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 8192 // 8kb 小于8kb 的图片将被打成base64
+              limit: 8192, // 8kb 小于8kb 的图片将被打成base64
+              name: '[name].[hash:8].[ext]',
+              outputPath: "img" // ==>'/img/[name].[hash:8].[ext]'
             }
           }
         ]
@@ -57,9 +59,14 @@ module.exports = {
   plugins: [ // 插件
     // new extractTextPlugin("styles.css"),
     new cleanWebpackPlugin(), // 删除文件 保留新文件
+    new copyWebpackPlugin([{
+      from: path.resolve(__dirname, 'public/static'), 
+      to: path.resolve(__dirname, 'dist'),
+      ignore: ['index.html']
+    }]),
     new miniCssExtractPlugin({ // 插件暂时不支持HMR
-　　  filename: devEnv ? '[name].css' : '[name].[hash].css',
-　　  chunkFilename: devEnv ? '[id].css' : '[id].[hash].css',
+　　  filename: devEnv ? 'css/[name].css' : 'css/[name].[hash].css',
+　　  chunkFilename: devEnv ? 'css/[id].css' : 'css/[id].[hash].css',
 　　 }),
     new htmlWebpackPlugin({ // 
       filename: 'index.html',
