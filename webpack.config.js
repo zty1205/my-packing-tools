@@ -1,6 +1,10 @@
 const path = require('path')
 const htmlWebpackPlugin = require('html-webpack-plugin')
 const cleanWebpackPlugin = require('clean-webpack-plugin')
+// const extractTextPlugin = require("extract-text-webpack-plugin") //用来抽离单独抽离css文件
+const miniCssExtractPlugin = require("mini-css-extract-plugin") //用来抽离单独抽离css文件
+
+const devEnv = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   entry: {
@@ -10,6 +14,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js' // '[原文件名].js'
   },
+  devtool: devEnv ? 'inline-cheap-source-map' : false,
   module: {
     rules: [
       {
@@ -18,20 +23,26 @@ module.exports = {
         use: ['babel-loader']
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', {
-          loader: 'css-loader',
-          options: {
-            importLoaders: 1,
-          }
-        }, 'postcss-loader']
+        test: /\.(sa|sc|c)ss$/,
+        // use: ['style-loader', {
+        //   loader: 'css-loader',
+        //   options: {
+        //     importLoaders: 1,
+        //   }
+        // }, 'postcss-loader']
+        // use: extractTextPlugin.extract({
+        //   fallback: "style-loader",
+        //   use: ["css-loader", 'postcss-loader']
+        // })
+        use: [
+          miniCssExtractPlugin.loader,
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
       },
       {
-        test:/\.(sass|scss)$/,
-        use:['style-loader','css-loader','sass-loader', 'postcss-loader']
-      },
-      {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpg|jpg|svg)$/,
         use: [
           {
             loader: 'url-loader',
@@ -44,7 +55,12 @@ module.exports = {
     ]
   },
   plugins: [ // 插件
+    // new extractTextPlugin("styles.css"),
     new cleanWebpackPlugin(), // 删除文件 保留新文件
+    new miniCssExtractPlugin({ // 插件暂时不支持HMR
+　　  filename: devEnv ? '[name].css' : '[name].[hash].css',
+　　  chunkFilename: devEnv ? '[id].css' : '[id].[hash].css',
+　　 }),
     new htmlWebpackPlugin({ // 
       filename: 'index.html',
       template: './public/index.html', // html文件模板
