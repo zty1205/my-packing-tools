@@ -1,11 +1,8 @@
 const path = require('path')
-const htmlWebpackPlugin = require('html-webpack-plugin')
 const cleanWebpackPlugin = require('clean-webpack-plugin')
-// const extractTextPlugin = require("extract-text-webpack-plugin") //用来抽离单独抽离css文件
 const miniCssExtractPlugin = require("mini-css-extract-plugin") //用来抽离单独抽离css文件
 const copyWebpackPlugin = require("copy-webpack-plugin")
-const webpack = require('webpack')
-const devEnv = process.env.NODE_ENV !== 'production';
+const htmlWebpackPlugin = require('html-webpack-plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -19,7 +16,6 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].[hash:8].js' // '[原文件名].js'
   },
-  devtool: devEnv ? 'inline-cheap-source-map' : false,
   module: {
     rules: [
       {
@@ -29,16 +25,6 @@ module.exports = {
       },
       {
         test: /\.(sa|sc|c)ss$/,
-        // use: ['style-loader', {
-        //   loader: 'css-loader',
-        //   options: {
-        //     importLoaders: 1,
-        //   }
-        // }, 'postcss-loader']
-        // use: extractTextPlugin.extract({
-        //   fallback: "style-loader",
-        //   use: ["css-loader", 'postcss-loader']
-        // })
         use: [
           miniCssExtractPlugin.loader,
           'css-loader',
@@ -52,9 +38,9 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 8192, // 8kb 小于8kb 的图片将被打成base64
+              limit: 20 * 1024, // 20kb 小于20kb 的图片将被打成base64
               name: '[name].[hash:8].[ext]',
-              outputPath: "img" // ==>'/img/[name].[hash:8].[ext]'
+              outputPath: "img" // ==>'/img/[name].[ext]'
             }
           }
         ]
@@ -68,8 +54,6 @@ module.exports = {
     }
   },
   plugins: [ // 插件
-    // new extractTextPlugin("styles.css"),
-    new webpack.HotModuleReplacementPlugin(),
     new cleanWebpackPlugin(), // 删除文件 保留新文件
     new copyWebpackPlugin([{
       from: path.resolve(__dirname, 'public/static'), 
@@ -77,9 +61,9 @@ module.exports = {
       ignore: ['index.html']
     }]),
     new miniCssExtractPlugin({ // 插件暂时不支持HMR
-　　  filename: devEnv ? 'css/[name].css' : 'css/[name].[hash].css',
-　　  chunkFilename: devEnv ? 'css/[id].css' : 'css/[id].[hash].css',
-　　 }),
+      filename: 'css/[name].[hash:8].css',
+      chunkFilename: 'css/[id].[hash:8].css'
+    }),
     new htmlWebpackPlugin({ // 
       filename: 'index.html',
       template: './public/index.html', // html文件模板
@@ -90,13 +74,5 @@ module.exports = {
         removeComments: true, //移除HTML中的注释
       }
     })
-  ],
-  devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
-    port: 8088,
-    host: 'localhost',
-    overlay: true, // 浏览器会显示编译错误
-    inline: true, // 默认为true, 意思是，在打包时会注入一段代码到最后的js文件中，用来监视页面的改动而自动刷新页面,当为false时，网页自动刷新的模式是iframe，也就是将模板页放在一个frame中
-    hot: true
-  }
+  ]
 }

@@ -29,6 +29,21 @@ console.log("hello")
 console.log("list = ", list);
 console.log("isArray = ", utils.isArray(list));
 
+class TestClass {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  getX() {
+    return this.x
+  }
+  getY() {
+    return this.y
+  }
+}
+
+console.log("class = ", new TestClass(1,1))
+
 if (process.env.NODE_ENV === "development" && module.hot) {
   module.hot.accept()
 }
