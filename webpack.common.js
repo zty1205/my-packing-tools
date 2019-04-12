@@ -44,7 +44,27 @@ module.exports = {
             }
           }
         ]
-      }
+      },
+      {
+        test: /\.(ico)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 2 * 1024, // 20kb 小于20kb 的图片将被打成base64
+              name: '[name].[ext]',
+              outputPath: "img" // ==>'/img/[name].[ext]'
+            }
+          }
+        ]
+      },
+      {
+        test: /\.html$/,
+        loader: "html-loader",
+        options: {
+          attrs: ['img:src', 'link:href']
+        }
+      },
     ]
   },
   resolve: {
@@ -64,7 +84,8 @@ module.exports = {
       filename: 'css/[name].[hash:8].css',
       chunkFilename: 'css/[id].[hash:8].css'
     }),
-    new htmlWebpackPlugin({ // 
+    new htmlWebpackPlugin({ // html模板插件
+      favicon: path.resolve(__dirname, 'src/favicon.ico'),
       filename: 'index.html',
       template: './public/index.html', // html文件模板
       inject: 'body', // js 放在body下面

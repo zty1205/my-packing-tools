@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "conf": "webpack --config webpack.config.js",
+    "dist": "webpack --config webpack.common.js",
     "dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "start": "webpack-dev-server --open --config webpack.dev.js"
@@ -24,6 +24,7 @@
     "copy-webpack-plugin": "^5.0.2",
     "css-loader": "^2.1.1",
     "cssnano": "^4.1.10",
+    "cssnano-preset-advanced": "^4.0.7",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.16.0",
