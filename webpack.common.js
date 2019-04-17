@@ -10,11 +10,13 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    index: ["./src/index.js"]
+    index: ["./src/index.js"],
+    main: ["./src/main/main.js"]
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].[hash:8].js' // '[原文件名].js'
+    // filename: 'app.js'
   },
   module: {
     rules: [
@@ -89,7 +91,7 @@ module.exports = {
       filename: 'index.html',
       template: './public/index.html', // html文件模板
       inject: 'body', // js 放在body下面
-      chunks: ['index'], // 引入js文件 与入口一致，默认为all 引入所有
+      chunks: ['index', 'main'], // 引入js文件 与入口一致，默认为all 引入所有
       minify: {
         collapseWhitespace: true,  //折叠空白区域 也就是压缩代码
         removeComments: true, //移除HTML中的注释
